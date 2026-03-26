@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundy — Solution de Financement</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0e0e0e;
+    --paper: #f8f6f2;
+    --cream: #ede9e2;
+    --gold: #b8966a;
+    --gold-light: #d4b896;
+    --muted: #8a8278;
+    --white: #ffffff;
+    --radius: 2px;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(248,246,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(184,150,106,0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: var(--white) !important;
+    padding: 10px 22px;
+    font-size: 11px !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-family: 'Outfit', sans-serif;
+    transition: background 0.2s;
+  }
+
+  .nav-cta:hover { background: var(--gold) !important; color: var(--white); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 120px 60px 80px;
+    gap: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(184,150,106,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.1s forwards;
+  }
+
+  .hero-eyebrow .line {
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-eyebrow span {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(44px, 5vw, 68px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 420px;
+    line-height: 1.8;
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--white);
+    padding: 16px 36px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover { background: var(--gold); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    padding: 16px 24px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(14,14,14,0.2);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: rgba(184,150,106,0.15);
+    border: 1px solid rgba(184,150,106,0.15);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .stat {
+    background: var(--paper);
+    padding: 28px 20px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 400;
+    color: var(--ink);
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Hero right side card */
+  .hero-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeIn 1s 0.5s forwards;
+  }
+
+  .feature-card {
+    background: var(--white);
+    border: 1px solid rgba(184,150,106,0.15);
+    padding: 28px 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--gold-light);
+    box-shadow: 0 4px 24px rgba(184,150,106,0.1);
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+
+  .feature-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .feature-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── SIMULATOR ── */
+  section { padding: 100px 60px; }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .section-label .line { width: 28px; height: 1px; background: var(--gold); }
+
+  .section-label span {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 3.5vw, 48px);
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 12px;
+    line-height: 1.15;
+  }
+
+  .section-sub {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.8;
+    margin-bottom: 56px;
+  }
+
+  .simulator-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .sim-controls { display: flex; flex-direction: column; gap: 36px; }
+
+  .sim-field label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+
+  .sim-field label span:first-child {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .sim-field label .val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  input[type=range] {
+    width: 100%;
+    height: 2px;
+    background: var(--cream);
+    outline: none;
+    border: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--ink);
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--ink);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  input[type=range]::-webkit-slider-thumb:hover { background: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+
+  .sim-result {
+    background: var(--ink);
+    padding: 48px 40px;
+    color: var(--white);
+    position: sticky;
+    top: 100px;
+  }
+
+  .sim-result-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 8px;
+  }
+
+  .sim-result-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .sim-result-amount span {
+    font-size: 22px;
+    color: var(--gold-light);
+  }
+
+  .sim-result-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 36px;
+  }
+
+  .sim-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 28px;
+    margin-bottom: 36px;
+  }
+
+  .sim-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .sim-row .key {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.06em;
+  }
+
+  .sim-row .value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--white);
+  }
+
+  .sim-row .value.gold { color: var(--gold-light); }
+
+  /* ── TESTIMONIALS ── */
+  #temoignages { background: var(--cream); }
+
+  .testi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-top: 0;
+  }
+
+  .testi-card {
+    background: var(--white);
+    padding: 36px 30px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .testi-card:hover { border-color: rgba(184,150,106,0.3); }
+
+  .testi-stars {
+    color: var(--gold);
+    font-size: 14px;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+  }
+
+  .testi-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  .testi-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .testi-avatar {
+    width: 36px;
+    height: 36px;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .testi-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 1px;
+  }
+
+  .testi-role {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── FAQ ── */
+  .faq-list { max-width: 720px; margin-top: 0; }
+
+  .faq-item {
+    border-bottom: 1px solid rgba(14,14,14,0.1);
+  }
+
+  .faq-question {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    text-align: left;
+    gap: 20px;
+  }
+
+  .faq-q-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .faq-icon {
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(184,150,106,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+    color: var(--gold);
+    transition: transform 0.3s, background 0.2s;
+  }
+
+  .faq-item.open .faq-icon {
+    transform: rotate(45deg);
+    background: var(--gold);
+    color: var(--white);
+    border-color: var(--gold);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.3s;
+  }
+
+  .faq-item.open .faq-answer { max-height: 300px; }
+
+  .faq-answer p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.85;
+    padding-bottom: 24px;
+  }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--ink); color: var(--white); }
+
+  #contact .section-label .line { background: var(--gold); }
+  #contact .section-title { color: var(--white); }
+  #contact .section-sub { color: rgba(255,255,255,0.45); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .form-group label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    padding: 14px 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+
+  .form-group select option { background: var(--ink); }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--gold);
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: rgba(255,255,255,0.25);
+  }
+
+  .btn-submit {
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    padding: 18px 40px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s;
+    align-self: flex-start;
+  }
+
+  .btn-submit:hover { background: #a07f58; transform: translateY(-1px); }
+
+  .contact-info { display: flex; flex-direction: column; gap: 36px; padding-top: 8px; }
+
+  .contact-item {}
+
+  .contact-item-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .contact-item-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--white);
+  }
+
+  .contact-guarantee {
+    border: 1px solid rgba(184,150,106,0.25);
+    padding: 28px;
+    margin-top: 12px;
+  }
+
+  .contact-guarantee p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.8;
+  }
+
+  .contact-guarantee strong { color: var(--gold-light); font-weight: 400; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #070707;
+    padding: 40px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(184,150,106,0.1);
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .footer-logo span { color: var(--gold); }
+
+  footer p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 50px; }
+    .hero-visual { display: none; }
+    section { padding: 70px 24px; }
+    .simulator-grid, .testi-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    footer { flex-direction: column; gap: 12px; padding: 28px 24px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">fundy<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#simulateur">Simulateur</a></li>
+    <li><a href="#temoignages">Témoignages</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#contact" class="nav-cta">Demander un prêt</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="accueil">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="line"></div>
+      <span>Solution de Financement Personnel</span>
+    </div>
+    <h1 class="hero-title">
+      Le prêt qui<br>s'adapte à <em>votre vie.</em>
+    </h1>
+    <p class="hero-sub">
+      Financez vos projets avec sérénité. Fundy vous accompagne de la simulation à la mise à disposition des fonds, avec transparence et rapidité.
+    </p>
+    <div class="hero-actions">
+      <a href="#simulateur" class="btn-primary">Simuler mon prêt</a>
+      <a href="#contact" class="btn-ghost">Prendre contact</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-number">48h</span>
+        <span class="stat-label">Réponse de principe</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">1,9%</span>
+        <span class="stat-label">TAEG à partir de</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">10k+</span>
+        <span class="stat-label">Clients financés</span>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">◈</div>
+      <div>
+        <div class="feature-title">Taux transparents</div>
+        <div class="feature-desc">Aucun frais caché. Votre TAEG est affiché avant toute signature.</div>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◇</div>
+      <div>
+        <div class="feature-title">100% en ligne</div>
+        <div class="feature-desc">De la demande au virement, sans déplacement, sans papier.</div>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◉</div>
+      <div>
+        <div class="feature-title">Remboursement flexible</div>
+        <div class="feature-desc">Modifiez vos mensualités selon vos besoins, sans pénalité.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULATOR -->
+<section id="simulateur">
+  <div class="section-label"><div class="line"></div><span>Simulateur</span></div>
+  <h2 class="section-title">Calculez votre<br>mensualité en temps réel</h2>
+  <p class="section-sub">Ajustez le montant et la durée pour trouver l'équilibre qui vous convient.</p>
+
+  <div class="simulator-grid">
+    <div class="sim-controls">
+      <div class="sim-field">
+        <label>
+          <span>Montant souhaité</span>
+          <span class="val" id="lbl-amount">15 000 €</span>
+        </label>
+        <input type="range" id="amount" min="1000" max="75000" step="500" value="15000" oninput="updateSim()">
+      </div>
+      <div class="sim-field">
+        <label>
+          <span>Durée de remboursement</span>
+          <span class="val" id="lbl-duration">36 mois</span>
+        </label>
+        <input type="range" id="duration" min="12" max="84" step="6" value="36" oninput="updateSim()">
+      </div>
+      <div class="sim-field">
+        <label>
+          <span>Taux annuel (TAEG)</span>
+          <span class="val" id="lbl-rate">3,5%</span>
+        </label>
+        <input type="range" id="rate" min="1.9" max="10" step="0.1" value="3.5" oninput="updateSim()">
+      </div>
+    </div>
+
+    <div class="sim-result">
+      <div class="sim-result-label">Votre mensualité estimée</div>
+      <div class="sim-result-amount"><span id="monthly">434</span> <span>€ / mois</span></div>
+      <div class="sim-result-sub">Sous réserve d'acceptation du dossier</div>
+      <div class="sim-breakdown">
+        <div class="sim-row">
+          <span class="key">Capital emprunté</span>
+          <span class="value" id="res-capital">15 000 €</span>
+        </div>
+        <div class="sim-row">
+          <span class="key">Durée totale</span>
+          <span class="value" id="res-duration">36 mois</span>
+        </div>
+        <div class="sim-row">
+          <span class="key">Coût total du crédit</span>
+          <span class="value gold" id="res-cost">624 €</span>
+        </div>
+        <div class="sim-row">
+          <span class="key">Total remboursé</span>
+          <span class="value" id="res-total">15 624 €</span>
+        </div>
+      </div>
+      <a href="#contact" class="btn-primary" style="display:block;text-align:center;">Faire une demande</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="temoignages">
+  <div class="section-label"><div class="line"></div><span>Témoignages</span></div>
+  <h2 class="section-title">Ils nous ont fait confiance</h2>
+  <p class="section-sub" style="margin-bottom:48px;">Plus de 10 000 clients ont financé leurs projets avec Fundy.</p>
+
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">« Processus remarquablement fluide. J'ai obtenu ma réponse en moins de 24h et les fonds ont été versés dans les 48h suivantes. »</p>
+      <div class="testi-author">
+        <div class="testi-avatar">S</div>
+        <div>
+          <div class="testi-name">Sophie M.</div>
+          <div class="testi-role">Prêt travaux · 18 000 €</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">« Les taux sont vraiment compétitifs et l'équipe conseillère a su m'accompagner dans le choix de la durée idéale pour mon budget. »</p>
+      <div class="testi-author">
+        <div class="testi-avatar">T</div>
+        <div>
+          <div class="testi-name">Thomas R.</div>
+          <div class="testi-role">Prêt auto · 22 500 €</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★☆</div>
+      <p class="testi-quote">« Interface intuitive, simulation en temps réel, aucun frais surprise à la signature. Exactement ce que je cherchais depuis longtemps. »</p>
+      <div class="testi-author">
+        <div class="testi-avatar">A</div>
+        <div>
+          <div class="testi-name">Amélie D.</div>
+          <div class="testi-role">Prêt personnel · 8 000 €</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-label"><div class="line"></div><span>FAQ</span></div>
+  <h2 class="section-title">Questions fréquentes</h2>
+  <p class="section-sub" style="margin-bottom:48px;">Tout ce que vous devez savoir avant de faire votre demande.</p>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-q-text">Quels sont les critères pour obtenir un prêt Fundy ?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-answer">
+        <p>Pour bénéficier d'un prêt personnel Fundy, vous devez être majeur, résident en France, disposer de revenus réguliers et ne pas être inscrit au FICP. Une étude personnalisée est réalisée pour chaque dossier afin de vous proposer les meilleures conditions.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-q-text">Combien de temps prend l'étude de mon dossier ?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-answer">
+        <p>Vous recevez une réponse de principe sous 24h ouvrées. Une fois votre dossier complet transmis, la décision définitive est rendue sous 48h. Les fonds sont généralement virés dans un délai de 3 à 5 jours ouvrés après signature du contrat.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-q-text">Puis-je rembourser mon prêt par anticipation ?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-answer">
+        <p>Oui. Fundy vous permet de rembourser tout ou partie de votre prêt par anticipation à tout moment, sans pénalité dès lors que le montant remboursé est inférieur à 10 000 €. Au-delà, des frais légaux plafonnés à 1% peuvent s'appliquer.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-q-text">Quels documents dois-je fournir ?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-answer">
+        <p>La liste standard comprend : une pièce d'identité en cours de validité, un justificatif de domicile récent, vos 3 derniers bulletins de salaire (ou bilans pour les indépendants), et votre dernier avis d'imposition. Tout est transmis en ligne, de façon sécurisée.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        <span class="faq-q-text">Fundy est-il un établissement agréé ?</span>
+        <div class="faq-icon">+</div>
+      </button>
+      <div class="faq-answer">
+        <p>Fundy est un établissement de crédit agréé par l'ACPR (Autorité de Contrôle Prudentiel et de Résolution) et immatriculé à l'ORIAS en tant qu'intermédiaire en opérations de banque. Vos données et fonds sont protégés conformément à la réglementation française et européenne.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label"><div class="line"></div><span>Contact</span></div>
+  <h2 class="section-title">Démarrez votre demande</h2>
+  <p class="section-sub">Un conseiller vous recontacte sous 24h pour étudier votre projet.</p>
+
+  <div class="contact-grid">
+    <form class="contact-form" action="https://formspree.io/f/xgopervz" method="POST" onsubmit="submitForm(event)">
+      <input type="hidden" name="_replyto" value="fundy.finn@outlook.fr">
+      <input type="hidden" name="_subject" value="Nouvelle demande de prêt — Fundy">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" placeholder="Jean">
+        </div>
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" placeholder="Dupont">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="jean.dupont@email.com">
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" placeholder="+33 6 00 00 00 00">
+      </div>
+      <div class="form-group">
+        <label>Montant souhaité</label>
+        <select>
+          <option>Moins de 5 000 €</option>
+          <option>5 000 € – 15 000 €</option>
+          <option selected>15 000 € – 30 000 €</option>
+          <option>30 000 € – 50 000 €</option>
+          <option>Plus de 50 000 €</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message (optionnel)</label>
+        <textarea rows="4" placeholder="Décrivez brièvement votre projet de financement..."></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Envoyer ma demande →</button>
+      <p id="form-success" style="display:none;font-size:13px;color:#b8966a;margin-top:8px;letter-spacing:0.06em;">✓ Votre demande a bien été envoyée. Nous vous recontactons sous 24h.</p>
+    </form>
+
+    <div class="contact-info">
+      <div class="contact-item">
+        <div class="contact-item-label">Disponibilité</div>
+        <div class="contact-item-value">Lun – Ven, 9h – 18h</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-label">Réponse garantie</div>
+        <div class="contact-item-value">Sous 24 heures ouvrées</div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-label">Accompagnement</div>
+        <div class="contact-item-value">Conseiller dédié</div>
+      </div>
+      <div class="contact-guarantee">
+        <p><strong>Vos données sont protégées.</strong> Fundy s'engage à ne jamais transmettre vos informations à des tiers. Toutes les communications sont chiffrées et conformes au RGPD.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">fundy<span>.</span></div>
+  <p>© 2025 Fundy SAS · Agréé ACPR · Mentions légales · RGPD</p>
+  <p>Un crédit vous engage et doit être remboursé.</p>
+</footer>
+
+<script>
+  function formatEur(n) {
+    return new Intl.NumberFormat('fr-FR').format(Math.round(n)) + ' €';
+  }
+
+  function updateSim() {
+    const P = parseFloat(document.getElementById('amount').value);
+    const n = parseInt(document.getElementById('duration').value);
+    const r = parseFloat(document.getElementById('rate').value) / 100 / 12;
+
+    document.getElementById('lbl-amount').textContent = formatEur(P);
+    document.getElementById('lbl-duration').textContent = n + ' mois';
+    document.getElementById('lbl-rate').textContent = parseFloat(document.getElementById('rate').value).toFixed(1).replace('.', ',') + '%';
+
+    let monthly;
+    if (r === 0) {
+      monthly = P / n;
+    } else {
+      monthly = P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    }
+
+    const total = monthly * n;
+    const cost = total - P;
+
+    document.getElementById('monthly').textContent = new Intl.NumberFormat('fr-FR').format(Math.round(monthly));
+    document.getElementById('res-capital').textContent = formatEur(P);
+    document.getElementById('res-duration').textContent = n + ' mois';
+    document.getElementById('res-cost').textContent = formatEur(cost);
+    document.getElementById('res-total').textContent = formatEur(total);
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  async function submitForm(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        document.getElementById('form-success').style.display = 'block';
+        form.reset();
+      } else {
+        alert('Une erreur est survenue. Veuillez réessayer.');
+      }
+    } catch {
+      alert('Erreur réseau. Veuillez réessayer.');
+    }
+  }
+
+  updateSim();
+</script>
+</body>
+</html>
